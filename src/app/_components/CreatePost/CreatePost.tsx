@@ -1,5 +1,4 @@
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 "use client"
 import Box from '@mui/material/Box'
