@@ -6,7 +6,7 @@ import { AppDispatch, RootState } from '@/lib/store';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const PostDetails = () => {
