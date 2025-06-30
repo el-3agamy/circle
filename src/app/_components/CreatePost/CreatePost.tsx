@@ -1,3 +1,6 @@
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 "use client"
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -36,7 +39,7 @@ const CreatePost = () => {
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement> | null ) {
     if (e?.target.files && e.target.files[0]) {
       setImage(e?.target.files[0])
-      const x: any = URL.createObjectURL(e.target.files[0])
+      const x: string = URL.createObjectURL(e.target.files[0])
       setImageSrc(x)
 
     }
@@ -60,7 +63,7 @@ const CreatePost = () => {
      
 
 
-      const { data } = await axios.post(`https://linked-posts.routemisr.com/posts`,
+       await axios.post(`https://linked-posts.routemisr.com/posts`,
 
         formData
         , {
@@ -68,6 +71,7 @@ const CreatePost = () => {
             token: localStorage.getItem("token")
           }
         })
+      
 
 
     

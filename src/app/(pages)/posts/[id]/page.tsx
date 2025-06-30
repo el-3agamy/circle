@@ -18,10 +18,8 @@ const {id} = useParams <{id :string}>()
 
 
 const {back} = useRouter()
-    const [loading, setLoading] = useState<boolean>(false)
 
    async function deletPost(postID : string) {
-              setLoading(true)
           const {data} = await axios.delete(`https://linked-posts.routemisr.com/posts/${postID}`,{
               headers :{
                   token : localStorage.getItem("token")
@@ -29,7 +27,6 @@ const {back} = useRouter()
           })
           console.log(data);
            back()
-          setLoading(false)
           
           }
 

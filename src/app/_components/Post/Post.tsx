@@ -6,7 +6,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -50,7 +50,7 @@ export default function Post({ post , deletPost }: { post: PostInterface, deletP
     }
     async function onSubmit(values: ValuesI, { resetForm }: { resetForm: ()=>void }) {
         setLoading(true)
-        const { data } = await axios.post(`https://linked-posts.routemisr.com/comments`, values, {
+         await axios.post(`https://linked-posts.routemisr.com/comments`, values, {
             headers: {
                 token: localStorage.getItem("token")
             }
@@ -59,14 +59,13 @@ export default function Post({ post , deletPost }: { post: PostInterface, deletP
         await dispatch(getAllPosts())
         await dispatch(getSinglePost(post._id))
         setLoading(false)
-        // console.log(data);
 
 
         console.log('comment');
 
     }
 
-    const { values, handleChange, handleSubmit, resetForm } = useFormik({
+    const { values, handleChange, handleSubmit } = useFormik({
         initialValues,
         onSubmit
     })
