@@ -55,7 +55,7 @@ function Register() {
     name: Yup.string().max(12, "Max 12 charcters").min(3, "Min 3 characters").required("Name is required."),
     email : Yup.string().email("Email is not correct").required('Email is required') ,
     password : Yup.string().required("Password is required").min(3).max(15) ,
-    rePassword : Yup.string().required().oneOf([Yup.ref('password')]).matches( /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/) ,
+    rePassword : Yup.string().required().oneOf([Yup.ref('password')]) ,
     dateOfBirth: Yup.string().required("Date of Birth is required"),
     gender: Yup.string().oneOf(["male", "female"], "Gender is required").required("Gender is required")
 
