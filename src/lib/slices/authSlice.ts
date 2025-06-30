@@ -7,9 +7,10 @@ interface AuthSliceInitialState {
     isUserLoggedIn : boolean ,
     userData : User | null
 }
+const isBrowser = typeof window !== "undefined";
 
 export const initialState : AuthSliceInitialState = {
-        isUserLoggedIn : !!localStorage.getItem("token") ,
+        isUserLoggedIn : isBrowser && !!localStorage.getItem("token") ,
         userData : null
     } 
 

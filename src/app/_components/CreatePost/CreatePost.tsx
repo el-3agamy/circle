@@ -47,7 +47,7 @@
 //   }
 
 
-//   async function addPost(e: React.ChangeEvent<HTMLInputElement>) {
+//   async function addPost(e : any) {
 //       setLoading(true)
 
 //     e.preventDefault()
@@ -172,6 +172,8 @@
 // }
 
 // export default CreatePost
+
+
 "use client"
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
