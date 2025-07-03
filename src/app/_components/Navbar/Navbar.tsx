@@ -19,7 +19,7 @@ import { setIsUserLoggedIn } from '@/lib/slices/authSlice';
 import {  useRouter } from 'next/navigation';
 import { RootState } from '@/lib/store';
 
-const pages = ['Home', 'Posts'];
+const pages = ['Profile', 'Posts'];
 const settings = {
   loggedIn :['Profile', 'Account', 'Dashboard', 'Logout'] ,
   notLoggedIn :['Login', 'Register'] ,
@@ -57,11 +57,19 @@ const dispatch = useDispatch()
 const router = useRouter() ;
 
 const logOut = ()=>{
-  localStorage.removeItem("token") ;
+  localStorage.removeItem("token") ; ///  I comment it for updating password
   dispatch(setIsUserLoggedIn(false))
   router.push('/login') ;
 
 }
+React.useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    dispatch(setIsUserLoggedIn(true));
+  } else {
+    dispatch(setIsUserLoggedIn(false));
+  }
+}, []);
 
   return (
     <AppBar position="static">
@@ -86,7 +94,8 @@ const logOut = ()=>{
             Circle
           </Typography>
 
-          { isUserLoggedIn && <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          { isUserLoggedIn && 
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -116,13 +125,14 @@ const logOut = ()=>{
               { pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography sx={{ textAlign: 'center' }}>
-                    <Link href={page === "Home" ? "/"  :"/" + page.toLowerCase() }
+                    <Link href={page === "Porfile" ? "/profile"  :"/" + page.toLowerCase() }
                       style={{textDecoration : 'none' , color : "inherit"}}
-                       
-
-                      >
+                     
+                     >
                 
-                     {page}</Link>
+                     {page}
+                     
+                     </Link>
                      
                   </Typography>
                 </MenuItem>
@@ -155,7 +165,7 @@ const logOut = ()=>{
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <Link href={page === "Home" ? "/"  :"/" + page.toLowerCase() }
+                <Link href={page === " Profile" ? "/profile"  :"/" + page.toLowerCase() }
                       style={{textDecoration : 'none' , color : "inherit"}}
                 
                 >{page}</Link>
@@ -191,8 +201,12 @@ const logOut = ()=>{
                     // logoutFunction
                   if (setting === "Logout") {
                     logOut()
-                    handleCloseUserMenu()
-                }}}>
+                    handleCloseUserMenu()}
+
+                    // if (setting === "change Password") {
+                      
+                    // }
+                }}>
                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                 </MenuItem>
               ))

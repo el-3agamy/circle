@@ -17,39 +17,50 @@ function Login() {
 
 
 
-  const [isLoading , setIsLoading] = useState<boolean>(false)
-  const router = useRouter()
-const dispatch = useDispatch()
 
- interface ValuesOfLogin {
-   
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
+  const dispatch = useDispatch()
+
+  interface ValuesOfLogin {
+
     email: string,
     password: string,
-   
-   
-  };
-  
-  const initialValues  : ValuesOfLogin= {
-   
-    email: "",
-    password: "",
-  
+
+
   };
 
- 
+  const initialValues: ValuesOfLogin = {
+
+    email: "",
+    password: "",
+
+  };
+
+
 
   const onSubmit = async (values: ValuesOfLogin) => {
     setIsLoading(true)
-    const {data} = await axios.post(`https://linked-posts.routemisr.com/users/signin`, values)
+   try {
+    
+       const { data } = await axios.post(`https://linked-posts.routemisr.com/users/signin`, values)
     setIsLoading(false)
-      
+
     if (data.message === "success") {
-      localStorage.setItem("token" , data.token)
+      localStorage.setItem("token", data.token)
       dispatch(setIsUserLoggedIn(true))
       router.push('/')
-      
+
     }
-     
+   } catch (error) {
+
+    console.log(error);
+    
+    
+   } finally{
+    setIsLoading(false)
+   }
+
   };
 
 
@@ -57,6 +68,11 @@ const dispatch = useDispatch()
     initialValues,
     onSubmit
   })
+
+
+
+// //////////////////////////////////////////////////////////////
+
 
 
   return (
@@ -69,9 +85,9 @@ const dispatch = useDispatch()
         <Box component={"form"}
           onSubmit={formik.handleSubmit}
         >
-          
 
-         
+
+
 
 
           <TextField
@@ -120,20 +136,30 @@ const dispatch = useDispatch()
             </Typography>
           }
 
-          
 
-        
 
-        
+
+
+
           <Button
             variant='contained'
             fullWidth
-            loading ={Boolean(isLoading)}
+            loading={Boolean(isLoading)}
             loadingPosition="start"
             type='submit'
             sx={{ mt: 3 }}
-          >Register</Button>
+          >Sign in
+          </Button>
+
         </Box>
+
+        <Button
+          variant='outlined'
+          fullWidth
+          loadingPosition="start"
+          sx={{ mt: 3  , color :"red"}}
+          onClick={()=>{router.push('/updatePassword')}}
+        >Forget Password</Button>
 
       </Container>
     </Box>

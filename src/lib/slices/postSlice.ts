@@ -33,7 +33,8 @@ interface PostsSliceInitialStste {
     posts : PostInterface [] ,
     post  : PostInterface | null ,
     // post  : string | null ,
-    isLoading : boolean
+    isLoading : boolean ,
+    userPosts : PostInterface []
 
 
 }
@@ -41,7 +42,8 @@ interface PostsSliceInitialStste {
  const initialState : PostsSliceInitialStste =  {
         posts : [] ,
         post : null ,
-        isLoading : true
+        isLoading : true ,
+        userPosts : []
     } ;
 
 
@@ -74,7 +76,18 @@ export const getSinglePost = createAsyncThunk("posts/getSinglePost" , async (id 
 
 
 
+export const getUserPosts = createAsyncThunk('posts/getUserPosts' , async ()=>{
 
+    const {data} = await axios.get(`https://linked-posts.routemisr.com/users/664bcf3e33da217c4af21f00/posts?limit=5`,{
+        headers:{
+            token : localStorage.getItem("token")
+        }
+
+        
+    })
+        console.log(data.posts);
+        return data.posts.reverse()
+})
 
 const postSlice = createSlice({
     name : "posts" ,
@@ -85,8 +98,15 @@ const postSlice = createSlice({
         }
     } ,
     extraReducers (builder){
-        builder.addCase(getAllPosts.fulfilled , (state , action)=>{
+        builder.addCase(getAllPosts.pending , (state )=>{
+            state.isLoading = true
+        }) 
+        .addCase(getAllPosts.fulfilled , (state , action)=>{
             state.posts = action.payload
+            state.isLoading = false
+        }) 
+        .addCase(getAllPosts.rejected , (state)=>{
+            state.isLoading = false
         }) 
 
         builder.addCase(getSinglePost.fulfilled , (state , action)=>{
@@ -98,6 +118,13 @@ const postSlice = createSlice({
 
         })
 
+        builder.addCase(getUserPosts.pending , (state )=>{
+            state.isLoading = true
+        })
+        builder.addCase(getUserPosts.fulfilled , (state , action)=>{
+            state.userPosts = action.payload
+            state.isLoading = false
+        })
         
 
     }

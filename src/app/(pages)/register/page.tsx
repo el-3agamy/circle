@@ -18,9 +18,10 @@ import { useRouter } from 'next/navigation'
 
 function Register() {
 
-  const [isLoading , setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isErrore, setIsError] = useState<string | null>(null)
   const router = useRouter()
-  const initialValues  : ValuesOfRegister= {
+  const initialValues: ValuesOfRegister = {
     name: "",
     email: "",
     password: "",
@@ -40,22 +41,39 @@ function Register() {
 
   const onSubmit = async (values: ValuesOfRegister) => {
     setIsLoading(true)
-    const {data} = await axios.post(`https://linked-posts.routemisr.com/users/signup`, values)
-    setIsLoading(false)
-      
-    if (data.message === "success") {
+    setIsError(null)
+    try {
+      const { data } = await axios.post(`https://linked-posts.routemisr.com/users/signup`, values)
+      setIsLoading(false)
 
-      router.push('/login')
-      
+      if (data.message === "success") {
+
+        router.push('/login')
+
+      }
+    } catch (error: unknown) {
+
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+        setIsError(error?.message)
+      }
+
+
+    } finally {
+      setIsLoading(false)
     }
-     
+
   };
+
+
+
 
   const validationSchema = Yup.object({
     name: Yup.string().max(12, "Max 12 charcters").min(3, "Min 3 characters").required("Name is required."),
-    email : Yup.string().email("Email is not correct").required('Email is required') ,
-    password : Yup.string().required("Password is required").min(3).max(15) ,
-    rePassword : Yup.string().required().oneOf([Yup.ref('password')]) ,
+    email: Yup.string().email("Email is not correct").required('Email is required'),
+    password: Yup.string().required("Password is required").min(8).max(15)
+      .matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, 'Password must be at least 8 characters , include uppercase and lowercase letters, a number, and a special character.'), // from backend
+    rePassword: Yup.string().required().oneOf([Yup.ref('password')], ' Must matchs Password'),
     dateOfBirth: Yup.string().required("Date of Birth is required"),
     gender: Yup.string().oneOf(["male", "female"], "Gender is required").required("Gender is required")
 
@@ -70,171 +88,187 @@ function Register() {
 
 
   return (
-    <Box>
+    <>
 
+      {
 
-      <Container maxWidth="sm">
-        <Typography component={"h1"} variant='h4'>Register Now.</Typography>
-
-        <Box component={"form"}
-          onSubmit={formik.handleSubmit}
-        >
-          <TextField
-            fullWidth
-            margin='normal'
-            type='text'
-            name='name'
-            label="Name"
-            placeholder='... ex: SaEid'
-            variant='outlined'
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-
-          />
-
-          {
-            formik.errors.name && formik.touched.name &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.name)}
-            </Typography>
-          }
-
-
-          <TextField
-            fullWidth
-            margin='normal'
-            type='email'
-            name='email'
-            label="Email"
-            placeholder='... ex: Saeid12@gmail.com'
-            variant='outlined'
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-
-          />
-
-
-          {
-            formik.errors.email && formik.touched.email &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.email)}
-            </Typography>
-          }
-
-          <TextField
-            fullWidth
-            margin='normal'
-            type='password'
-            name='password'
-            label="Password"
-            variant='outlined'
-            value={formik.values.password}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-
-          />
-
-          {
-            formik.errors.password && formik.touched.password &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.password)}
-            </Typography>
-          }
-
-          <TextField
-            fullWidth
-            margin='normal'
-            type='password'
-            name='rePassword'
-            label="Re-Password"
-            variant='outlined'
-            value={formik.values.rePassword}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-
-          />
-
-          {
-            formik.errors.rePassword && formik.touched.rePassword &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.rePassword)}
-            </Typography>
-          }
-
-          <TextField
-            fullWidth
-            margin='normal'
-            type='date'
-            name='dateOfBirth'
-            label="Date Of Birth"
-            variant='outlined'
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-            }}
-            value={formik.values.dateOfBirth}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            
-          />
-
-          {
-            formik.errors.dateOfBirth && formik.touched.dateOfBirth &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.dateOfBirth)}
-            </Typography>
-          }
-
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Gender</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Gender"
-              name='gender'
-              value={formik.values.gender || ""}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            >
-              <MenuItem value={""}>Select Gender</MenuItem>
-              <MenuItem value={"male"}>Male</MenuItem>
-              <MenuItem value={"female"}>Female</MenuItem>
-
-            </Select>
-          </FormControl>
-          {
-            formik.errors.gender && formik.touched.gender &&
-            <Typography
-              sx={{ textAlign: "center", color: "red" }}
-            >
-              {String(formik.errors.gender)}
-            </Typography>
-          }
-          <Button
-            variant='contained'
-            fullWidth
-            loading ={Boolean(isLoading)}
-            loadingPosition="start"
-            type='submit'
-            sx={{ mt: 3 }}
-          >Register</Button>
+        isErrore ? <Box component="div"
+          sx={{
+            height: "100vh", width: "100%", display: "flex", justifyContent: "center",
+            alignItems: "center", bgcolor: "#f4f4f4", color: "red"
+          }}>
+          <Typography>{isErrore}</Typography>
         </Box>
 
-      </Container>
-    </Box>
+          :
+
+          <Box>
+
+
+            <Container maxWidth="sm">
+              <Typography component={"h1"} variant='h4'>Register Now.</Typography>
+
+              <Box component={"form"}
+                onSubmit={formik.handleSubmit}
+              >
+                <TextField
+                  fullWidth
+                  margin='normal'
+                  type='text'
+                  name='name'
+                  label="Name"
+                  placeholder='... ex: SaEid'
+                  variant='outlined'
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+
+                />
+
+                {
+                  formik.errors.name && formik.touched.name &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.name)}
+                  </Typography>
+                }
+
+
+                <TextField
+                  fullWidth
+                  margin='normal'
+                  type='email'
+                  name='email'
+                  label="Email"
+                  placeholder='... ex: Saeid12@gmail.com'
+                  variant='outlined'
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+
+                />
+
+
+                {
+                  formik.errors.email && formik.touched.email &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.email)}
+                  </Typography>
+                }
+
+                <TextField
+                  fullWidth
+                  margin='normal'
+                  type='password'
+                  name='password'
+                  label="Password"
+                  variant='outlined'
+                  value={formik.values.password}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+
+                />
+
+                {
+                  formik.errors.password && formik.touched.password &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.password)}
+                  </Typography>
+                }
+
+                <TextField
+                  fullWidth
+                  margin='normal'
+                  type='password'
+                  name='rePassword'
+                  label="Re-Password"
+                  variant='outlined'
+                  value={formik.values.rePassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+
+                />
+
+                {
+                  formik.errors.rePassword && formik.touched.rePassword &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.rePassword)}
+                  </Typography>
+                }
+
+                <TextField
+                  fullWidth
+                  margin='normal'
+                  type='date'
+                  name='dateOfBirth'
+                  label="Date Of Birth"
+                  variant='outlined'
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    },
+                  }}
+                  value={formik.values.dateOfBirth}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+
+                />
+
+                {
+                  formik.errors.dateOfBirth && formik.touched.dateOfBirth &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.dateOfBirth)}
+                  </Typography>
+                }
+
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Gender</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Gender"
+                    name='gender'
+                    value={formik.values.gender || ""}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  >
+                    <MenuItem value={""}>Select Gender</MenuItem>
+                    <MenuItem value={"male"}>Male</MenuItem>
+                    <MenuItem value={"female"}>Female</MenuItem>
+
+                  </Select>
+                </FormControl>
+                {
+                  formik.errors.gender && formik.touched.gender &&
+                  <Typography
+                    sx={{ textAlign: "center", color: "red" }}
+                  >
+                    {String(formik.errors.gender)}
+                  </Typography>
+                }
+                <Button
+                  variant='contained'
+                  fullWidth
+                  loading={Boolean(isLoading)}
+                  loadingPosition="start"
+                  type='submit'
+                  sx={{ mt: 3 }}
+                >Register</Button>
+              </Box>
+
+            </Container>
+          </Box>
+      }
+    </>
   )
 }
 

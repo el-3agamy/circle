@@ -3,6 +3,7 @@
 import Post from '@/app/_components/Post/Post';
 import { getSinglePost } from '@/lib/slices/postSlice';
 import { AppDispatch, RootState } from '@/lib/store';
+import Box from '@mui/material/Box';
 import axios from 'axios';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -47,9 +48,11 @@ const {back} = useRouter()
 
         {
           post ?
-          <Post post={post} deletPost={deletPost} />
+          <Box sx={{width : "75%" , margin : "0 auto"}}>
+            <Post post={post} deletPost={deletPost} />
+          </Box>
           :
-         <div style={{height : "100vh"}}>
+         <div style={{height : "100vh" }}>
             <h1>Loading ...</h1>
          </div>
       }
