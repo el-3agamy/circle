@@ -8,7 +8,7 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-export default function profile() {
+export default function Profile() {
 
   const dispatch = useDispatch<AppDispatch>()
   const { userPosts } = useSelector((state: RootState) => state.posts)
